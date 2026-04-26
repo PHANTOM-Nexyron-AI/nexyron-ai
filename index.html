@@ -1,89 +1,388 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nexyron AI</title>
-<link rel="stylesheet" href="style.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+
+/* BASE */
+body {
+  margin:0;
+  font-family:'Inter',sans-serif;
+  background:#f4f7fb;
+  color:#111;
+}
+
+/* INTRO */
+#intro {
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:#f4f7fb;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+  transition:opacity 1s ease;
+}
+
+#intro img {
+  width:90px;
+  animation:zoom 1s ease;
+}
+
+@keyframes zoom {
+  from {transform:scale(0.6); opacity:0;}
+  to {transform:scale(1); opacity:1;}
+}
+
+/* TOPBAR */
+.topbar {
+  display:flex;
+  align-items:center;
+  padding:12px 16px;
+  background:white;
+  border-bottom:1px solid #eee;
+}
+
+/* MENU */
+.menu {
+  font-size:20px;
+  cursor:pointer;
+  margin-right:12px;
+}
+
+/* BRAND */
+.brand {
+  display:flex;
+  align-items:center;
+}
+
+.brand img {
+  width:28px;
+  margin-right:8px;
+}
+
+.brand span {
+  font-weight:500;
+  background:linear-gradient(135deg,#2f81f7,#00c6ff);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+/* DROPDOWN */
+.dropdown {
+  position:absolute;
+  top:55px;
+  left:10px;
+  background:white;
+  border:1px solid #ddd;
+  border-radius:10px;
+  display:none;
+  box-shadow:0 10px 25px rgba(0,0,0,0.1);
+}
+
+.dropdown button {
+  display:block;
+  width:160px;
+  padding:10px;
+  border:none;
+  background:none;
+  text-align:left;
+  cursor:pointer;
+}
+
+.dropdown button:hover {
+  background:#f0f0f0;
+}
+
+/* CHAT */
+.chat {
+  height:calc(100vh - 120px);
+  overflow-y:auto;
+  padding:20px;
+}
+
+/* WELCOME */
+#welcome {
+  text-align:center;
+  margin-top:30%;
+}
+
+#welcome img {
+  width:90px;
+  animation:float 4s infinite ease-in-out;
+}
+
+@keyframes float {
+  50% {transform:translateY(-10px);}
+}
+
+/* MESSAGE */
+.msg {
+  margin-bottom:15px;
+  animation:fadeIn 0.3s;
+  position:relative;
+}
+
+@keyframes fadeIn {
+  from {opacity:0; transform:translateY(10px);}
+  to {opacity:1;}
+}
+
+.user { text-align:right; }
+
+.bubble {
+  display:inline-block;
+  padding:12px;
+  border-radius:14px;
+  max-width:75%;
+  white-space:pre-wrap;
+}
+
+/* USER */
+.user .bubble {
+  background:linear-gradient(135deg,#2f81f7,#00c6ff);
+  color:white;
+}
+
+/* AI */
+.ai .bubble {
+  background:white;
+  border:1px solid #e5e5e5;
+}
+
+/* INPUT */
+.input-area {
+  position:fixed;
+  bottom:0;
+  width:100%;
+  display:flex;
+  padding:10px;
+  background:white;
+  border-top:1px solid #ddd;
+}
+
+input {
+  flex:1;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #ddd;
+}
+
+button.send {
+  margin-left:10px;
+  padding:12px;
+  border:none;
+  background:#2f81f7;
+  color:white;
+  border-radius:10px;
+}
+
+/* LOADER */
+.loader span {
+  width:6px;
+  height:6px;
+  background:#2f81f7;
+  margin:2px;
+  display:inline-block;
+  border-radius:50%;
+  animation:bounce 1s infinite alternate;
+}
+
+@keyframes bounce {
+  to {transform:translateY(-6px);}
+}
+
+/* ===== NEW FEATURE UI ===== */
+
+.actions {
+  position:absolute;
+  top:-10px;
+  right:10px;
+  display:none;
+  gap:5px;
+}
+
+.msg:hover .actions {
+  display:flex;
+}
+
+.action-btn {
+  font-size:12px;
+  padding:3px 6px;
+  border:none;
+  cursor:pointer;
+  border-radius:6px;
+  background:#eee;
+}
+
+.action-btn:hover {
+  background:#ddd;
+}
+
+.edit-area {
+  width:100%;
+  border:none;
+  outline:none;
+  padding:10px;
+  border-radius:10px;
+}
+
+</style>
 </head>
 
 <body>
 
-<!-- INTRO (ONLY LOGO) -->
+<!-- INTRO -->
 <div id="intro">
   <img src="logo.png">
 </div>
 
-<div class="container">
-
-<div class="sidebar">
-  <button class="new-chat" onclick="newChat()">+ New Chat</button>
-</div>
-
-<div class="main">
-
+<!-- TOPBAR -->
 <div class="topbar">
-  <img src="logo.png">
-  <span>Nexyron AI</span>
-</div>
+  <div class="menu" onclick="toggleMenu()">☰</div>
 
-<div class="chat" id="chat">
-  <div id="welcome">
+  <div class="brand">
     <img src="logo.png">
-    <h3>Nexyron by PHANTOM AI</h3>
+    <span>Nexyron by PHANTOM</span>
   </div>
 </div>
 
-<div class="input-area">
-  <input id="query" placeholder="Ask anything..." onkeypress="if(event.key==='Enter') send()">
-  <button onclick="send()">Send</button>
+<!-- DROPDOWN -->
+<div class="dropdown" id="menuBox">
+  <button onclick="newChat()">🆕 New Chat</button>
 </div>
 
+<!-- CHAT -->
+<div class="chat" id="chat">
+  <div id="welcome">
+    <img src="logo.png">
+    <h3>Nexyron AI</h3>
+  </div>
 </div>
+
+<!-- INPUT -->
+<div class="input-area">
+  <input id="query" placeholder="Ask anything..." onkeypress="if(event.key==='Enter') send()">
+  <button class="send" onclick="send()">Send</button>
 </div>
 
 <script>
 
-let chatBox = document.getElementById("chat");
+const chatBox = document.getElementById("chat");
 
-/* INTRO REMOVE */
-setTimeout(()=>{
-  document.getElementById("intro").style.opacity="0";
-  setTimeout(()=>{ document.getElementById("intro").remove(); },1000);
-},2000);
+/* INTRO */
+window.addEventListener("load", () => {
+  setTimeout(()=>{
+    let intro = document.getElementById("intro");
+    intro.style.opacity="0";
+    setTimeout(()=> intro.style.display="none",1000);
+  },1800);
+});
 
-/* MESSAGE */
+/* MENU */
+function toggleMenu(){
+  let menu = document.getElementById("menuBox");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+
+/* NEW CHAT */
+function newChat(){
+  chatBox.innerHTML = `
+    <div id="welcome">
+      <img src="logo.png">
+      <h3>Nexyron AI</h3>
+    </div>`;
+}
+
+/* COPY */
+function copyText(text){
+  navigator.clipboard.writeText(text);
+}
+
+/* DELETE */
+function deleteMsg(el){
+  el.parentElement.remove();
+}
+
+/* EDIT MESSAGE */
+function editMsg(bubble){
+  let old = bubble.innerText;
+
+  bubble.innerHTML = `<textarea class="edit-area">${old}</textarea>
+  <button onclick="saveEdit(this)">Save</button>`;
+}
+
+/* SAVE EDIT */
+function saveEdit(btn){
+  let parent = btn.parentElement;
+  let text = parent.querySelector("textarea").value;
+  parent.innerHTML = text;
+}
+
+/* TYPEWRITER FIXED */
 function addMessage(text,type){
+
   let div=document.createElement("div");
   div.className="msg "+type;
 
   let bubble=document.createElement("div");
   bubble.className="bubble";
-  div.appendChild(bubble);
 
+  /* ACTIONS */
+  let actions=document.createElement("div");
+  actions.className="actions";
+
+  if(type==="user"){
+    actions.innerHTML=`
+      <button class="action-btn" onclick="editMsg(this.parentElement.parentElement.querySelector('.bubble'))">Edit</button>
+      <button class="action-btn" onclick="deleteMsg(this)">Del</button>
+    `;
+  } else {
+    actions.innerHTML=`
+      <button class="action-btn" onclick="copyText(this.parentElement.parentElement.querySelector('.bubble').innerText)">Copy</button>
+      <button class="action-btn" onclick="deleteMsg(this)">Del</button>
+    `;
+  }
+
+  div.appendChild(actions);
+  div.appendChild(bubble);
   chatBox.appendChild(div);
 
   let i=0;
-  function type(){
-    if(i<text.length){
-      bubble.innerText+=text.charAt(i);
+
+  function typeWriter(){
+    if(i < text.length){
+      let char = text.charAt(i);
+
+      if(char === " ") bubble.innerHTML += "&nbsp;";
+      else if(char === "\n") bubble.innerHTML += "<br>";
+      else bubble.innerHTML += char;
+
       i++;
-      chatBox.scrollTop=chatBox.scrollHeight;
-      setTimeout(type,8);
+      chatBox.scrollTop = chatBox.scrollHeight;
+      setTimeout(typeWriter,8);
     }
   }
-  type();
+
+  typeWriter();
 }
 
 /* SEND */
 async function send(){
-  let q=document.getElementById("query").value.trim();
+  let input=document.getElementById("query");
+  let q=input.value.trim();
   if(!q) return;
 
   document.getElementById("welcome").style.display="none";
 
   addMessage(q,"user");
-  document.getElementById("query").value="";
+  input.value="";
 
   let load=document.createElement("div");
   load.className="msg ai";
@@ -91,29 +390,22 @@ async function send(){
   chatBox.appendChild(load);
 
   try{
-    let res=await fetch("https://nexyron-backend.onrender.com/ask"),{
+    let res=await fetch("https://nexyron-backend.onrender.com/ask",{
       method:"POST",
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify({query:q})
     });
 
     let data=await res.json();
+
     chatBox.removeChild(load);
-    addMessage(data.answer,"ai");
+
+    addMessage(data.answer || "No response","ai");
 
   }catch{
-    chatBox.removeChild(load);
+    if(load.parentNode) chatBox.removeChild(load);
     addMessage("Server error","ai");
   }
-}
-
-/* NEW CHAT */
-function newChat(){
-  chatBox.innerHTML=`
-    <div id="welcome">
-      <img src="logo.png">
-      <h3>Nexyron by PHANTOM AI</h3>
-    </div>`;
 }
 
 </script>

@@ -3,85 +3,175 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0f1115">
 <title>PHANTOM Nexyron AI</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 
 <style>
+
+/* BASE */
 body {
   margin:0;
   font-family:'Inter',sans-serif;
   background:#0f1115;
   color:#e6e6e6;
+  overflow:hidden;
+}
+
+/* 🌌 Animated Background */
+body::before {
+  content:"";
+  position:fixed;
+  width:200%;
+  height:200%;
+  background: radial-gradient(circle at 30% 30%, #1f3b73, transparent),
+              radial-gradient(circle at 70% 70%, #0a1a33, transparent);
+  animation: moveBg 20s linear infinite;
+  z-index:-1;
+}
+
+@keyframes moveBg {
+  0% {transform:translate(0,0);}
+  50% {transform:translate(-10%, -10%);}
+  100% {transform:translate(0,0);}
+}
+
+/* INTRO */
+#intro {
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:#0f1115;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+  animation:fadeOut 1s ease forwards;
+  animation-delay:3s;
+}
+
+.intro-logo {
+  width:90px;
+  opacity:0;
+  transform:scale(0.7);
+  animation:logoIn 1s ease forwards;
+  filter:drop-shadow(0 0 15px #2f81f7);
+}
+
+#intro h1 {
+  margin-top:15px;
+  font-size:22px;
+  opacity:0;
+  animation:textFade 1s ease forwards;
+  animation-delay:1s;
+}
+
+#intro p {
+  font-size:13px;
+  color:#aaa;
+  opacity:0;
+  animation:textFade 1s ease forwards;
+  animation-delay:1.5s;
+}
+
+@keyframes logoIn {
+  to {opacity:1; transform:scale(1);}
+}
+
+@keyframes textFade {
+  to {opacity:1;}
+}
+
+@keyframes fadeOut {
+  to {opacity:0; visibility:hidden;}
+}
+
+/* LAYOUT */
+.container {
   display:flex;
   height:100vh;
 }
 
-/* Sidebar */
+/* SIDEBAR */
 .sidebar {
-  width:230px;
-  background:#0b0d11;
+  width:220px;
+  background:rgba(10,12,18,0.9);
+  backdrop-filter: blur(10px);
   padding:15px;
   border-right:1px solid #1f242b;
 }
 
 .sidebar h2 {
   font-size:14px;
-  margin-bottom:15px;
 }
 
 .new-chat {
-  background:#2f81f7;
-  border:none;
-  padding:10px;
+  margin-top:10px;
   width:100%;
+  padding:10px;
+  border:none;
+  background:#2f81f7;
   color:#fff;
   border-radius:6px;
-  cursor:pointer;
 }
 
-/* Main */
+/* MAIN */
 .main {
   flex:1;
   display:flex;
   flex-direction:column;
 }
 
-/* Chat */
+/* CHAT */
 .chat {
   flex:1;
-  padding:20px;
   overflow-y:auto;
+  padding:20px;
+  position:relative;
 }
 
-/* Messages */
+/* CENTER LOGO */
+#welcome {
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  text-align:center;
+}
+
+#welcome img {
+  width:80px;
+  animation:float 3s infinite ease-in-out;
+}
+
+@keyframes float {
+  50% {transform:translateY(-10px);}
+}
+
+/* MESSAGES */
 .msg {
-  margin-bottom:18px;
-  animation:fadeIn 0.3s ease;
+  margin-bottom:15px;
+  animation:fadeIn 0.3s;
 }
 
 @keyframes fadeIn {
   from {opacity:0; transform:translateY(10px);}
-  to {opacity:1; transform:translateY(0);}
+  to {opacity:1;}
 }
 
-.user {
-  text-align:right;
-}
+.user {text-align:right;}
 
 .bubble {
   display:inline-block;
-  padding:12px 14px;
+  padding:12px;
   border-radius:12px;
   max-width:75%;
-  line-height:1.5;
-  font-size:14px;
 }
 
 .user .bubble {
   background:#2f81f7;
-  color:#fff;
-  box-shadow:0 4px 12px rgba(47,129,247,0.3);
 }
 
 .ai .bubble {
@@ -89,53 +179,38 @@ body {
   border:1px solid #2a2f36;
 }
 
-/* Input */
+/* INPUT */
 .input-area {
   display:flex;
-  padding:15px;
-  border-top:1px solid #1f242b;
-  background:#0f1115;
+  padding:10px;
+  border-top:1px solid #222;
 }
 
 input {
   flex:1;
-  padding:12px;
+  padding:10px;
+  border:none;
   border-radius:8px;
-  border:1px solid #2a2f36;
   background:#171a21;
   color:#fff;
-  outline:none;
 }
 
 button {
   margin-left:10px;
-  padding:12px 16px;
-  background:#2f81f7;
+  padding:10px;
   border:none;
-  color:#fff;
+  background:#2f81f7;
+  color:white;
   border-radius:8px;
-  cursor:pointer;
 }
 
-/* Scrollbar */
-.chat::-webkit-scrollbar {
-  width:5px;
-}
-.chat::-webkit-scrollbar-thumb {
-  background:#2a2f36;
-}
-
-/* Loader */
-.loader {
-  display:inline-block;
-}
-
+/* LOADER */
 .loader span {
-  display:inline-block;
   width:6px;
   height:6px;
-  margin:2px;
   background:#aaa;
+  margin:2px;
+  display:inline-block;
   border-radius:50%;
   animation:bounce 1s infinite alternate;
 }
@@ -146,19 +221,34 @@ button {
 @keyframes bounce {
   to {transform:translateY(-5px);}
 }
+
 </style>
 </head>
 
 <body>
 
+<!-- INTRO -->
+<div id="intro">
+  <img src="logo.png" class="intro-logo">
+  <h1>PHANTOM</h1>
+  <p>Nexyron AI</p>
+</div>
+
+<div class="container">
+
 <div class="sidebar">
-  <h2>PHANTOM Nexyron</h2>
+  <h2>PHANTOM</h2>
   <button class="new-chat" onclick="newChat()">+ New Chat</button>
 </div>
 
 <div class="main">
 
-<div class="chat" id="chat"></div>
+<div class="chat" id="chat">
+  <div id="welcome">
+    <img src="logo.png">
+    <h3>PHANTOM Nexyron AI</h3>
+  </div>
+</div>
 
 <div class="input-area">
   <input id="query" placeholder="Ask anything..." onkeypress="if(event.key==='Enter') send()">
@@ -166,21 +256,11 @@ button {
 </div>
 
 </div>
+</div>
 
 <script>
+
 let chatBox = document.getElementById("chat");
-
-// Load saved chat
-window.onload = () => {
-  let saved = localStorage.getItem("nexyron_chat");
-  if(saved){
-    chatBox.innerHTML = saved;
-  }
-};
-
-function saveChat(){
-  localStorage.setItem("nexyron_chat", chatBox.innerHTML);
-}
 
 function addMessage(text, type){
   let div = document.createElement("div");
@@ -202,65 +282,44 @@ function addMessage(text, type){
     }
   }
   type();
-
-  saveChat();
 }
 
 async function send(){
-  let input = document.getElementById("query");
-  let q = input.value.trim();
-
+  let q = document.getElementById("query").value.trim();
   if(!q) return;
 
-  addMessage(q, "user");
-  input.value = "";
+  document.getElementById("welcome").style.display="none";
 
-  let thinking = document.createElement("div");
-  thinking.className = "msg ai";
-  thinking.innerHTML = `
-    <div class='bubble'>
-      <div class="loader">
-        <span></span><span></span><span></span>
-      </div>
-    </div>`;
-  chatBox.appendChild(thinking);
+  addMessage(q,"user");
+  document.getElementById("query").value="";
 
-  chatBox.scrollTop = chatBox.scrollHeight;
+  let loading = document.createElement("div");
+  loading.className="msg ai";
+  loading.innerHTML="<div class='bubble'><div class='loader'><span></span><span></span><span></span></div></div>";
+  chatBox.appendChild(loading);
 
-  try{
-    let res = await fetch("https://nexyron-backend.onrender.com/ask", {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({query:q})
-    });
+  let res = await fetch("https://nexyron-backend.onrender.com/ask",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({query:q})
+  });
 
-    let data = await res.json();
+  let data = await res.json();
 
-    chatBox.removeChild(thinking);
+  chatBox.removeChild(loading);
 
-    addMessage(data.answer, "ai");
-
-    if(data.sources && data.sources.length){
-      let src = document.createElement("div");
-      src.className = "msg ai";
-      src.innerHTML = "<div class='bubble'>Sources:<br>" +
-        data.sources.map(s => `<a href="${s}" target="_blank" style="color:#58a6ff">${s}</a>`).join("<br>") +
-        "</div>";
-      chatBox.appendChild(src);
-    }
-
-    saveChat();
-
-  } catch(err){
-    chatBox.removeChild(thinking);
-    addMessage("Server error. Try again.", "ai");
-  }
+  addMessage(data.answer,"ai");
 }
 
 function newChat(){
-  chatBox.innerHTML = "";
-  localStorage.removeItem("nexyron_chat");
+  chatBox.innerHTML = `
+    <div id="welcome">
+      <img src="logo.png">
+      <h3>PHANTOM Nexyron AI</h3>
+    </div>
+  `;
 }
+
 </script>
 
 </body>
